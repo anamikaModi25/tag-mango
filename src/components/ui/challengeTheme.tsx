@@ -20,8 +20,8 @@ export function useChallengeColors() {
   const sidebarInActiveText = useColorModeValue("#0400119C", "#F5F1FFB7");
   const sidebarLockIconColor = useColorModeValue("#0400119C", "#F5F1FFB7");
   const challengeMbBg = useColorModeValue(
-    "url('images/mobile-bg.png')",
-    "url('images/mobile-bg-dark.png')",
+    "url('/images/mobile-bg.png')",
+    "url('/images/mobile-bg-dark.png')",
   );
 
   return {

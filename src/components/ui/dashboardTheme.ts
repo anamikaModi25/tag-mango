@@ -17,7 +17,10 @@ export function useDashboardColors() {
   );
 
   const card = useColorModeValue("#ffffff", "#101725");
-  const border = useColorModeValue("#d7deeb", "#1d2b42");
+  const border = useColorModeValue(
+    isChallengeRoute ? "#F2EFF3" : "#d7deeb",
+    isChallengeRoute ? "#232225" : "#1d2b42",
+  );
   const text = useColorModeValue("#1d2330", "#e6edfb");
   const muted = useColorModeValue("#687790", "#8d9bb6");
   const accent = useColorModeValue("#be8a06", "#f0b20f");
