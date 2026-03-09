@@ -43,7 +43,7 @@ const PostCard: React.FC<IProps> = ({
   topBanner,
   mediaSrc,
   mediaAlt = "Post media",
-  mediaHeight = { base: "170px", md: "188px" },
+  mediaHeight = { base: "170px", sm: "180px", md: "188px" },
   actionsLeft,
   actionsRight,
 }) => {
@@ -53,12 +53,11 @@ const PostCard: React.FC<IProps> = ({
       {topBanner}
       {isPinned && (
         <Box
-          padding={10}
           color={text}
-          fontSize="xs"
-          fontWeight="600"
-          px={2}
-          py={1}
+          fontSize={{ base: "12px", md: "13px" }}
+          fontWeight={600}
+          px={{ base: 3, md: 4 }}
+          py={2}
           borderBottom="1px solid"
           borderColor={border}
           display="flex"
@@ -69,22 +68,35 @@ const PostCard: React.FC<IProps> = ({
           This is a pinned post
         </Box>
       )}
-      <Box padding={3}>
+      <Box padding={{ base: 3, md: 4 }}>
         <HStack justify="space-between" align="start">
-          <HStack align="start" spacing={3}>
+          <HStack align="start" spacing={{ base: 3, md: 4 }}>
             <Avatar size="md" name={authorName} src={url} />
             <Box>
-              <Text fontSize="md" fontWeight="600" color={text}>
+              <Text
+                fontSize={{ base: "14px", md: "16px" }}
+                fontWeight={600}
+                lineHeight="24px"
+                color={text}
+              >
                 {authorName}
               </Text>
-              <Text fontSize="xs" color={muted}>
+              <Text
+                fontSize={{ base: "12px", md: "13px" }}
+                color={muted}
+              >
                 {timeAgo}
               </Text>
             </Box>
           </HStack>
           <FiMoreHorizontal size={16} color={muted} />
         </HStack>
-        <Text mt={3} fontSize="sm" color={text} lineHeight="tall">
+        <Text
+          mt={3}
+          fontSize={{ base: "13px", md: "14px" }}
+          lineHeight="1.5"
+          color={text}
+        >
           {children}
         </Text>
         {mediaSrc ? (
@@ -110,8 +122,8 @@ const PostCard: React.FC<IProps> = ({
                 alignItems="center"
                 gap={2}
               >
-                <Image src={"/images/HandSmily.png"} alt="hand" />
-                <Image src={"/images/LikeSmily.png"} alt="Like" />
+                <Text as="span" fontSize="sm">🙏</Text>
+                <Text as="span" fontSize="sm">❤️</Text>
                 {likeCount}
               </Button>
               <IconButton

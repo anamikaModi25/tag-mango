@@ -1,33 +1,26 @@
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
-import { keyframes } from "@emotion/react";
 import {
   Avatar,
   Box,
-  Button,
   Flex,
   HStack,
   Image,
-  Input,
   Text,
-  Textarea,
   VStack,
   useColorModeValue,
   useDisclosure,
   AvatarGroup,
   Stack,
-  Divider,
 } from "@chakra-ui/react";
-import { FiUpload } from "react-icons/fi";
+import { FiClock } from "react-icons/fi";
 import Card from "../components/ui/Card";
-import AppButton from "../components/ui/AppButton";
 import AppBadge from "../components/ui/AppBadge";
 import { useChallengeColors } from "../components/ui/challengeTheme";
 import PostCard from "../components/ui/PostCard";
+import SubscriberPostCard from "../components/ui/SubscriberPostCard";
 import { NumberIcon } from "../Icons/NumberIcon";
-import { FaImage } from "react-icons/fa";
-import { FaPlayCircle } from "react-icons/fa";
-import { FaSmile } from "react-icons/fa";
-import CustomModal from "../components/ui/CustomModal";
+import ChallengeIntroModal from "../components/ui/ChallengeIntroModal";
+import CheckinModal from "../components/ui/CheckinModal";
 
 const INTRO_SEEN_KEY = "day9_intro_seen";
 const JOINED_KEY = "day9_joined";
@@ -48,17 +41,6 @@ const safeStorageSet = (key: string, value: string) => {
   }
 };
 
-const confettiDrop = keyframes`
-  from {
-    transform: translateY(-10px) rotate(0deg);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(18px) rotate(260deg);
-    opacity: 1;
-  }
-`;
-
 function DayChallengePage() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -66,7 +48,7 @@ function DayChallengePage() {
     onOpen: onCheckinOpen,
     onClose: onCheckinClose,
   } = useDisclosure();
-  const { text, muted, border, card } = useChallengeColors();
+  const { text, muted, card } = useChallengeColors();
   const modalMuted = useColorModeValue("gray.600", "#8d9bb6");
   const modalText = useColorModeValue("gray.800", "#e6edfb");
   const inputBg = useColorModeValue("#f7f8fc", "#151d2d");
@@ -121,61 +103,45 @@ function DayChallengePage() {
 
   return (
     <>
-      <Flex width="100%" justifyContent="center">
+      <Flex width="100%" justifyContent="center" px={{ base: 0, md: 4 }}>
         <Box
-          maxW={{ base: "100%", md: "70%", lg: "60%" }}
+          w="100%"
+          maxW={{ base: "100%", sm: "480px", md: "560px", lg: "600px" }}
           filter={isOpen ? "blur(2px)" : "none"}
           transition="filter 180ms ease"
         >
-          <VStack align="stretch" spacing={4}>
+          <VStack align="stretch" spacing={{ base: 4, md: 6 }} w="100%">
             {submittedPost ? (
-              <PostCard
+              <SubscriberPostCard
                 authorName="Ashraf Idrishi"
                 timeAgo="Today"
-                likeCount="4"
-                commentCount="10"
+                headerLabel="Your Submission"
                 mediaSrc={submittedPost.imageUrl}
                 mediaAlt="Submitted challenge check-in"
-                topBanner={
-                  <Box
-                    h="40px"
-                    borderBottom={`1px solid ${border}`}
-                    bg="linear-gradient(90deg, #e9f9ef 0%, #f4fcf7 60%, #e6f7ee 100%)"
-                    position="relative"
-                    borderTopLeftRadius="24px"
-                    borderTopEndRadius="24px"
-                  >
-                    <HStack justify="center" h="100%">
-                      <Text fontSize="xs" fontWeight="700" color="#21693e">
-                        Your Submission
-                      </Text>
-                    </HStack>
-                    {[10, 24, 40, 56, 70, 82, 94].map((left, idx) => (
-                      <Box
-                        key={left}
-                        position="absolute"
-                        left={`${left}%`}
-                        top="-4px"
-                        w="4px"
-                        h="8px"
-                        borderRadius="full"
-                        bg={idx % 2 === 0 ? "#6fd78b" : "#f2b24c"}
-                        animation={`${confettiDrop} 1.2s ease ${idx * 0.08}s infinite alternate`}
-                      />
-                    ))}
-                  </Box>
-                }
+                likeCount="4"
+                commentCount="10"
               >
                 {submittedPost.caption}
-              </PostCard>
+              </SubscriberPostCard>
             ) : (
               <>
-                <Flex justify="center" align="center" sx={{ gap: 2 }}>
-                  <Text fontSize="18px" fontWeight="700" color={text}>
-                    Today&apos;s check-in
+                <Flex
+                  justify="space-between"
+                  align="center"
+                  flexWrap="wrap"
+                  gap={{ base: 2, sm: 3 }}
+                >
+                  <Text
+                    fontSize={{ base: "16px", sm: "18px" }}
+                    fontWeight={700}
+                    lineHeight="24px"
+                    color={text}
+                  >
+                    Your Check-in for Day 1
                   </Text>
-                  <AppBadge color="white" bg="red">
-                    Ends in 20h 44m
+                  <AppBadge color="white" bg="red" display="flex" alignItems="center" gap={1}>
+                    <FiClock size={12} />
+                    Ends in 06h 44m
                   </AppBadge>
                 </Flex>
                 <Box
@@ -190,7 +156,7 @@ function DayChallengePage() {
                     "&::before": {
                       content: '""',
                       position: "absolute",
-                      inset: "0", // border width
+                      inset: "0",
                       borderRadius: "inherit",
                       padding: "2px",
                       background:
@@ -203,9 +169,20 @@ function DayChallengePage() {
                     },
                   }}
                 >
-                  <HStack align="center" spacing={3} p={3}>
-                    <Avatar size="md" name="Ashraf Idrishi" />
-                    <Text fontSize="md" color={muted}>
+                  <HStack
+                    align="center"
+                    spacing={{ base: 3, md: 4 }}
+                    p={{ base: 3, md: 4 }}
+                  >
+                    <Avatar
+                      size={{ base: "md", md: "lg" }}
+                      name="Ashraf Idrishi"
+                    />
+                    <Text
+                      fontSize={{ base: "14px", md: "16px" }}
+                      lineHeight="24px"
+                      color={muted}
+                    >
                       Share what you completed today
                     </Text>
                   </HStack>
@@ -213,9 +190,19 @@ function DayChallengePage() {
               </>
             )}
 
-            <Card>
-              <HStack justify="center">
-                <Text fontSize="xl" fontWeight="700" color={text}>
+            <Card p={{ base: 4, md: 5 }}>
+              <HStack
+                justify="center"
+                flexWrap="wrap"
+                gap={2}
+                spacing={0}
+              >
+                <Text
+                  fontSize={{ base: "18px", md: "20px" }}
+                  fontWeight={700}
+                  lineHeight="28px"
+                  color={text}
+                >
                   See what others
                 </Text>
                 <AvatarGroup size="xs" max={3}>
@@ -229,18 +216,29 @@ function DayChallengePage() {
                   />
                   <Avatar name="Kent Dodds" src="https://bit.ly/kent-c-dodds" />
                 </AvatarGroup>
-                <Text fontSize="xl" fontWeight="700" color={text}>
+                <Text
+                  fontSize={{ base: "18px", md: "20px" }}
+                  fontWeight={700}
+                  lineHeight="28px"
+                  color={text}
+                >
                   shared
                 </Text>
               </HStack>
-              <Text fontSize="md" textAlign="center" color={text} mb={3}>
-                <b>85+</b> participants already completed
+              <Text
+                fontSize={{ base: "14px", md: "16px" }}
+                lineHeight="24px"
+                textAlign="center"
+                color={text}
+                mb={4}
+              >
+                <b>23+</b> already completed
               </Text>
-              <Stack spacing={4}>
+              <Stack spacing={{ base: 4, md: 5 }}>
                 <PostCard
                   authorName="Russell Brunson"
-                  timeAgo="3 Hours ago"
-                  likeCount="4"
+                  timeAgo="3 hrs ago"
+                  likeCount="18"
                   commentCount="10"
                   isPinned
                 >
@@ -257,27 +255,26 @@ function DayChallengePage() {
                       <Text>Minimum 20 minutes of sit-up</Text>
                     </HStack>
                     <HStack gap={2}>
-                      <Image src="/images/image-2.svg" />
+                      <Image src="/images/image-2.svg" alt="" boxSize="18px" flexShrink={0} />
                       <Text>Mention Intensity</Text>
                     </HStack>
                     <HStack gap={2}>
-                      <Image src="/images/image-3.svg" />
+                      <Image src="/images/image-3.svg" alt="" boxSize="18px" flexShrink={0} />
                       <Text>Upload Media (Optional)</Text>
                     </HStack>
                     <HStack gap={2}>
-                      <Image src="/images/image-4.svg" />
-
+                      <Image src="/images/image-4.svg" alt="" boxSize="18px" flexShrink={0} />
                       <Text>Upload Media (Optional)</Text>
                     </HStack>
                     <HStack gap={2}>
-                      <Image src="/images/image-5.svg" />
+                      <Image src="/images/image-5.svg" alt="" boxSize="18px" flexShrink={0} />
                       <Text>Upload Media (Optional)</Text>
                     </HStack>
                   </Stack>
                 </PostCard>
                 <PostCard
                   authorName="Sayantan Chandra"
-                  timeAgo="1 Hours ago"
+                  timeAgo="2h ago"
                   likeCount="4"
                   commentCount="10"
                 >
@@ -301,184 +298,34 @@ function DayChallengePage() {
           </VStack>
         </Box>
       </Flex>
-      <CustomModal
+      <ChallengeIntroModal
         isOpen={isOpen}
         onClose={onClose}
-        header={
-          <Box p={2}>
-            <Image src="/images/Image.jpg" sx={{ borderRadius: "24px" }} />
-          </Box>
-        }
-      >
-        <>
-          <Text fontWeight="700" fontSize="24px" color={modalText}>
-            9-Day Fitness Challenge
-          </Text>
-          <HStack>
-            <Text fontSize="sm" color={modalMuted}>
-              9 check-ins
-            </Text>
-            <Divider orientation="vertical" height="14px" />
-            <AvatarGroup size="xs" max={3}>
-              <Avatar name="Ryan Florence" src="https://bit.ly/ryan-florence" />
-              <Avatar name="Segun Adebayo" src="https://bit.ly/sage-adebayo" />
-              <Avatar name="Kent Dodds" src="https://bit.ly/kent-c-dodds" />
-            </AvatarGroup>
-            <Text fontSize="sm" color={modalMuted}>
-              75 participants joined
-            </Text>
-          </HStack>
+        onJoin={handleJoin}
+        joined={joined}
+        modalText={modalText}
+        modalMuted={modalMuted}
+        text={text}
+      />
 
-          <Text mt={3} fontSize="lg" fontWeight="600" color={modalText}>
-            Description
-          </Text>
-          <Text mt={1} fontSize="md" color={text}>
-            This 9-day fitness challenge is designed to help you build
-            consistency, boost energy, and feel stronger—one day at a time. Each
-            day comes with a simple, achievable fitness task that fits easily
-            into your routine, no matter your current fitness level.
-          </Text>
-          <Text mt={5} textAlign="center" fontSize="sm" color={text}>
-            Join the challenge and start your journey
-          </Text>
-          <AppButton
-            mt={2}
-            w="100%"
-            bg="#b98405"
-            color="white"
-            _hover={{ bg: "#9f7304" }}
-            onClick={handleJoin}
-          >
-            {joined ? "Joined" : "Join Now"}
-          </AppButton>
-        </>
-      </CustomModal>
-
-      <CustomModal
+      <CheckinModal
         isOpen={isCheckinOpen}
         onClose={resetCheckinModal}
-        header={
-          <VStack spacing={3} align="baseline">
-            <Avatar size="lg" name="Ashraf Idrishi" />
-            <Text fontSize="sm" fontWeight="600" color={modalText}>
-              Ashraf Idrishi
-            </Text>
-          </VStack>
-        }
-      >
-        <>
-          <Textarea
-            mt={2}
-            value={caption}
-            onChange={(e) => setCaption(e.target.value)}
-            placeholder="What did you complete today?"
-            bg={inputBg}
-            borderColor={inputBorder}
-            _placeholder={{ color: modalMuted }}
-            fontSize="sm"
-            resize="none"
-            rows={1}
-            sx={{ background: "none", border: "none" }}
-          />
-          <Box
-            mt={3}
-            border={`1px solid ${uploadBorder}`}
-            p={1}
-            borderRadius="8px"
-          >
-            <Box
-              borderRadius="8px"
-              h={{ base: "200px", md: "300px" }}
-              display="grid"
-              placeItems="center"
-              cursor="pointer"
-              overflow="hidden"
-              background={modalUploadBg}
-              onClick={() => fileInputRef.current?.click()}
-              p={{ base: 2, md: 5 }}
-            >
-              {imageUrl ? (
-                <Image
-                  src={imageUrl}
-                  alt="checkin upload"
-                  w="100%"
-                  h="100%"
-                  objectFit="cover"
-                />
-              ) : (
-                <VStack spacing={2} color={modalMuted}>
-                  <FiUpload size={24} />
-                  <Text fontSize="sm" width={{ md: "300px" }}>
-                    Images/Videos should be horizontal, at least 1280x720px. The
-                    maximum image size should be 2MB.
-                  </Text>
-                </VStack>
-              )}
-            </Box>
-          </Box>
-          <Input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            display="none"
-            onChange={handleFileChange}
-          />
-          <Flex mt={4} justify="space-between" align="center">
-            <HStack spacing={2}>
-              <Button
-                size="md"
-                variant="ghost"
-                colorScheme="blue"
-                rounded="full"
-                aria-label="Add photo"
-                background="#E6F4FE"
-                p={3}
-                minW="auto"
-              >
-                <FaImage size={14} />
-              </Button>
-              <Button
-                size="md"
-                variant="ghost"
-                colorScheme="red"
-                rounded="full"
-                aria-label="Add reaction"
-                background="#FEEBEC"
-                p={3}
-                minW="auto"
-              >
-                <FaPlayCircle size={14} />
-              </Button>
-              <Button
-                size="md"
-                variant="ghost"
-                colorScheme="yellow"
-                rounded="full"
-                aria-label="Add emoji"
-                background="#FFF0D1"
-                p={3}
-                minW="auto"
-              >
-                <FaSmile size={14} />
-              </Button>
-            </HStack>
-            <AppButton
-              size="md"
-              bg="#b98405"
-              color="white"
-              _hover={{ bg: "#9f7304" }}
-              isDisabled={!caption.trim() || !imageUrl}
-              onClick={handleSubmitCheckin}
-              _disabled={{
-                background: modalUploadBg,
-                color: muted,
-              }}
-            >
-              Submit Check-in
-            </AppButton>
-          </Flex>
-        </>
-      </CustomModal>
+        onSubmit={handleSubmitCheckin}
+        caption={caption}
+        setCaption={setCaption}
+        imageUrl={imageUrl}
+        onFileChange={handleFileChange}
+        fileInputRef={fileInputRef}
+        authorName="Ashraf Idrishi"
+        inputBg={inputBg}
+        inputBorder={inputBorder}
+        modalMuted={modalMuted}
+        modalText={modalText}
+        uploadBorder={uploadBorder}
+        modalUploadBg={modalUploadBg}
+        muted={muted}
+      />
     </>
   );
 }

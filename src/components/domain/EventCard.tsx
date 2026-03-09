@@ -7,7 +7,6 @@ import { PiVideoCameraThin } from "react-icons/pi";
 export interface EventCardProps {
   title: string;
   time: string;
-  hostName?: string;
   hostInitials?: string;
   live?: boolean;
   onJoin?: () => void;
@@ -19,7 +18,6 @@ export interface EventCardProps {
 export default function EventCard({
   title,
   time,
-  hostName = "Host",
   hostInitials = "H",
   live = false,
   onJoin,

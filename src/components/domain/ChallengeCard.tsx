@@ -6,7 +6,6 @@ import {
   Text,
   Divider,
 } from "@chakra-ui/react";
-import { IoPlayCircleOutline } from "react-icons/io5";
 import Card from "../ui/Card";
 import { useDashboardColors } from "../ui/dashboardTheme";
 

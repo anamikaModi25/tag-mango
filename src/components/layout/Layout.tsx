@@ -19,7 +19,7 @@ import { PiTicket } from "react-icons/pi";
 
 function Layout() {
   const [activeTab, setActiveTab] = useState("backstage");
-  const { heroBg, border, text, muted } = useDashboardColors();
+  const { heroBg, text, muted } = useDashboardColors();
 
   return (
     <>
