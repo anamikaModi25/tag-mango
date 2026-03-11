@@ -39,7 +39,7 @@ function DayChallengeLayout() {
             minH="48px"
           >
             <HStack spacing={2} flex={1} minW={0}>
-              <Box flexShrink={0} as="span">
+              <Box flexShrink={0} as="span" onClick={() => navigate("/")}>
                 <MdNavigateBefore size={24} />
               </Box>
               <Text

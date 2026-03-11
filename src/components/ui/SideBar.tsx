@@ -12,6 +12,8 @@ import { FiCheck } from "react-icons/fi";
 import { MdOutlineAccessTime } from "react-icons/md";
 import { useResponsive } from "../../hooks/useResponsive";
 import { FaLock } from "react-icons/fa";
+import { BsCheckCircleFill } from "react-icons/bs";
+import { MobNavBg } from "../../Icons/MobNavBg";
 
 type DayItem = {
   day: number;
@@ -54,12 +56,11 @@ const Sidebar = () => {
     sidebarText,
     sidebarInActiveText,
     sidebarLockIconColor,
+    card,
   } = useChallengeColors();
 
-  const mobileSelectedBg = useColorModeValue("#ffffff", "#2d3748");
   const mobileSelectedText = useColorModeValue("#1d2330", "#e6edfb");
   const mobileUnselectedText = useColorModeValue("#6B7280", "#a0aec0");
-  const mobileSelectedHover = useColorModeValue("gray.50", "whiteAlpha.200");
   const mobileUnselectedHover = useColorModeValue("gray.300", "whiteAlpha.300");
   const { isMobile } = useResponsive();
   const unlockedDay = getUnlockedDay();
@@ -125,19 +126,7 @@ const Sidebar = () => {
                 minW={isSelected ? "80px" : "72px"}
                 h={isSelected ? "64px" : "60px"}
                 px={isSelected ? 5 : 3}
-                borderRadius={isSelected ? "24px 24px 0 0" : "full"}
-                bg={isSelected ? mobileSelectedBg : "transparent"}
-                boxShadow={isSelected ? "sm" : "none"}
-                _hover={
-                  item.locked
-                    ? {}
-                    : {
-                        bg: isSelected
-                          ? mobileSelectedHover
-                          : mobileUnselectedHover,
-                      }
-                }
-                _active={{}}
+                position="relative"
                 onClick={() => {
                   if (!item.locked) setSelectedDay(item.day);
                 }}
@@ -147,24 +136,42 @@ const Sidebar = () => {
                 justifyContent="center"
               >
                 {isSelected ? (
-                  <VStack spacing={0} align="center" py={1}>
-                    <Text
-                      fontSize="11px"
-                      fontWeight={700}
-                      color={mobileSelectedText}
-                      lineHeight="1"
+                  <>
+                    <MobNavBg
+                      sx={{
+                        position: "absolute",
+                        bottom: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        zIndex: 0,
+                        color: card,
+                      }}
+                    />
+                    <VStack
+                      spacing={0}
+                      align="center"
+                      py={1}
+                      position="relative"
                     >
-                      Day
-                    </Text>
-                    <Text
-                      fontSize="24px"
-                      fontWeight={700}
-                      color={mobileSelectedText}
-                      lineHeight="1.1"
-                    >
-                      {item.day}
-                    </Text>
-                  </VStack>
+                      <Text
+                        fontSize="11px"
+                        fontWeight={700}
+                        color={mobileSelectedText}
+                        lineHeight="1"
+                      >
+                        Day
+                      </Text>
+                      <Text
+                        fontSize="24px"
+                        fontWeight={700}
+                        color={mobileSelectedText}
+                        lineHeight="1.1"
+                      >
+                        {item.day}
+                      </Text>
+                    </VStack>
+                  </>
                 ) : (
                   <VStack>
                     <HStack
@@ -190,7 +197,7 @@ const Sidebar = () => {
                     </HStack>
                     {item.done ? (
                       <Box flexShrink={0}>
-                        <FiCheck size={12} color="#25c368" />
+                        <BsCheckCircleFill size={12} color="#25c368" />
                       </Box>
                     ) : item.locked ? (
                       <Box flexShrink={0}>
