@@ -3,7 +3,6 @@ import { forwardRef } from "react";
 import { useDashboardColors } from "./dashboardTheme";
 
 export interface CardProps extends BoxProps {
-  /** Card variant */
   variant?: "elevated" | "outline" | "filled" | "subtle";
 }
 

@@ -1,0 +1,51 @@
+/* Day Challenge page styles - matching backstage-pass (https://gentle-gnome-a5671f.netlify.app/) */
+
+[data-challenge-page] {
+  --challenge-bg: #f7f6fc;
+  --challenge-bg-dark: #060b15;
+  --challenge-card: #ffffff;
+  --challenge-card-dark: #101725;
+  --challenge-border: #f2eff3;
+  --challenge-border-dark: #232225;
+  --challenge-text: #1d2330;
+  --challenge-text-dark: #e6edfb;
+  --challenge-muted: #687790;
+  --challenge-muted-dark: #8d9bb6;
+  --challenge-accent: #3182ce;
+  --challenge-accent-gold: #b8860b;
+  --challenge-radius: 24px;
+  --challenge-radius-sm: 12px;
+  --challenge-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --challenge-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+[data-challenge-page] .challenge-checkin-border {
+  background: linear-gradient(90.51deg, #b8860b 1.44%, #fff0d1 97.91%);
+  border-radius: var(--challenge-radius);
+}
+
+[data-challenge-page] .challenge-number-badge {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  border-radius: 50%;
+  background: var(--challenge-accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+[data-challenge-page] .challenge-timer-badge {
+  background: #e53e3e;
+  color: white;
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}

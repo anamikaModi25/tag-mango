@@ -14,6 +14,7 @@ export interface SubscriberPostCardProps {
   children?: React.ReactNode;
   mediaSrc?: string;
   mediaAlt?: string;
+  mediaType?: "image" | "video";
   mediaHeight?: { base: string; md: string } | string;
 }
 
@@ -28,6 +29,7 @@ export default function SubscriberPostCard({
   children,
   mediaSrc,
   mediaAlt = "Subscriber post media",
+  mediaType,
   mediaHeight,
 }: SubscriberPostCardProps) {
   const { border } = useChallengeColors();
@@ -41,6 +43,7 @@ export default function SubscriberPostCard({
       url={url}
       mediaSrc={mediaSrc}
       mediaAlt={mediaAlt}
+      mediaType={mediaType}
       mediaHeight={mediaHeight}
       topBanner={
         <ConfettiHeader

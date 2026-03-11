@@ -151,7 +151,7 @@ function HeaderLayout() {
         </Flex>
       ) : null}
 
-      <Box mx="auto" bg={frame}>
+      <Box mx="auto" bg={frame} pt={showHeader ? "56px" : 0}>
         <Outlet />
       </Box>
     </Box>

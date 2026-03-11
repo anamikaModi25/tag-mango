@@ -1,10 +1,19 @@
-import { Box, Button, VStack, Text, HStack, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  VStack,
+  Text,
+  HStack,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import { useChallengeColors } from "./challengeTheme";
 import { useState, useRef, useEffect } from "react";
-import { FiCheck } from "react-icons/fi";
 import { MdOutlineAccessTime } from "react-icons/md";
 import { useResponsive } from "../../hooks/useResponsive";
 import { FaLock } from "react-icons/fa";
+import { BsCheckCircleFill } from "react-icons/bs";
+import { MobNavBg } from "../../Icons/MobNavBg";
+import { FaCheckCircle } from "react-icons/fa";
 
 type DayItem = {
   day: number;
@@ -12,7 +21,7 @@ type DayItem = {
   done: boolean;
 };
 
-const TOTAL_DAYS = 9;
+export const TOTAL_DAYS = 9;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const CHALLENGE_START_KEY = "day_challenge_start_date";
 
@@ -22,7 +31,7 @@ const getTodayStart = () => {
   return today.getTime();
 };
 
-const getUnlockedDay = () => {
+export const getUnlockedDay = () => {
   if (typeof window === "undefined") {
     return 1;
   }
@@ -40,7 +49,12 @@ const getUnlockedDay = () => {
   return Math.min(TOTAL_DAYS, Math.max(1, elapsedDays + 1));
 };
 
-const Sidebar = () => {
+export interface SidebarProps {
+  selectedDay?: number;
+  onDayChange?: (day: number) => void;
+}
+
+const Sidebar = ({ selectedDay: controlledDay, onDayChange }: SidebarProps) => {
   const {
     overlay,
     sidebarChip,
@@ -50,20 +64,22 @@ const Sidebar = () => {
     card,
   } = useChallengeColors();
 
-  const mobileSelectedBg = useColorModeValue("#ffffff", "#2d3748");
-  const mobileUnselectedBg = useColorModeValue("#E8E8ED", "#1a202c");
   const mobileSelectedText = useColorModeValue("#1d2330", "#e6edfb");
   const mobileUnselectedText = useColorModeValue("#6B7280", "#a0aec0");
-  const mobileSelectedHover = useColorModeValue("gray.50", "whiteAlpha.200");
-  const mobileUnselectedHover = useColorModeValue("gray.300", "whiteAlpha.300");
   const { isMobile } = useResponsive();
   const unlockedDay = getUnlockedDay();
-  const [selectedDay, setSelectedDay] = useState(unlockedDay);
+  const [internalDay, setInternalDay] = useState(unlockedDay);
+  const selectedDay = controlledDay ?? internalDay;
+  const setSelectedDay = (day: number) => {
+    if (onDayChange) onDayChange(day);
+    else setInternalDay(day);
+  };
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const activeTabRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    if (!isMobile || !scrollContainerRef.current || !activeTabRef.current) return;
+    if (!isMobile || !scrollContainerRef.current || !activeTabRef.current)
+      return;
     const scrollEl = scrollContainerRef.current;
     const activeEl = activeTabRef.current;
     const activeRect = activeEl.getBoundingClientRect();
@@ -72,7 +88,10 @@ const Sidebar = () => {
     const scrollDelta = activeCenter - screenCenter;
     const targetScroll = scrollEl.scrollLeft + scrollDelta;
     scrollEl.scrollTo({
-      left: Math.max(0, Math.min(targetScroll, scrollEl.scrollWidth - scrollEl.clientWidth)),
+      left: Math.max(
+        0,
+        Math.min(targetScroll, scrollEl.scrollWidth - scrollEl.clientWidth),
+      ),
       behavior: "smooth",
     });
   }, [selectedDay, isMobile]);
@@ -80,8 +99,8 @@ const Sidebar = () => {
   const dayItems: DayItem[] = Array.from({ length: TOTAL_DAYS }).map(
     (_, index) => ({
       day: index + 1,
-      locked: index + 1 > unlockedDay,
-      done: index + 1 < unlockedDay,
+      locked: index + 1 > selectedDay,
+      done: index + 1 < selectedDay,
     }),
   );
 
@@ -90,7 +109,6 @@ const Sidebar = () => {
       <Box
         ref={scrollContainerRef}
         overflowX="auto"
-        pb={2}
         pt={1}
         mx={{ base: -4, sm: -5 }}
         sx={{
@@ -106,69 +124,97 @@ const Sidebar = () => {
           pl="calc(50vw - 40px)"
           pr="calc(50vw - 40px)"
         >
-        {dayItems.map((item) => {
-          const isSelected = selectedDay === item.day;
-          return (
-            <Button
-              key={item.day}
-              ref={isSelected ? activeTabRef : undefined}
-              variant="unstyled"
-              flexShrink={0}
-              minW={isSelected ? "80px" : "72px"}
-              h={isSelected ? "64px" : "40px"}
-              px={isSelected ? 5 : 3}
-              borderRadius={isSelected ? "24px 24px 0 0" : "full"}
-              bg={isSelected ? mobileSelectedBg : mobileUnselectedBg}
-              boxShadow={isSelected ? "sm" : "none"}
-              _hover={
-                item.locked ? {} : { bg: isSelected ? mobileSelectedHover : mobileUnselectedHover }
-              }
-              _active={{}}
-              onClick={() => {
-                if (!item.locked) setSelectedDay(item.day);
-              }}
-              opacity={item.locked ? 0.85 : 1}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
-              {isSelected ? (
-                <VStack spacing={0} align="center" py={1}>
-                  <Text
-                    fontSize="11px"
-                    fontWeight={700}
-                    color={mobileSelectedText}
-                    lineHeight="1"
-                  >
-                    Day
-                  </Text>
-                  <Text
-                    fontSize="24px"
-                    fontWeight={700}
-                    color={mobileSelectedText}
-                    lineHeight="1.1"
-                  >
-                    {item.day}
-                  </Text>
-                </VStack>
-              ) : (
-                <HStack spacing={1.5} align="center" flexWrap="nowrap" whiteSpace="nowrap">
-                  <Text fontSize="12px" fontWeight={500} color={mobileUnselectedText}>
-                    Day
-                  </Text>
-                  <Text fontSize="12px" fontWeight={600} color={mobileUnselectedText}>
-                    {item.day}
-                  </Text>
-                  {item.done ? (
-                    <Box flexShrink={0}><FiCheck size={12} color="#25c368" /></Box>
-                  ) : item.locked ? (
-                    <Box flexShrink={0}><FaLock size={11} color={mobileUnselectedText} /></Box>
-                  ) : null}
-                </HStack>
-              )}
-            </Button>
-          );
-        })}
+          {dayItems.map((item) => {
+            const isSelected = selectedDay === item.day;
+            return (
+              <Button
+                key={item.day}
+                ref={isSelected ? activeTabRef : undefined}
+                variant="unstyled"
+                flexShrink={0}
+                minW={isSelected ? "80px" : "72px"}
+                h={isSelected ? "64px" : "60px"}
+                px={isSelected ? 5 : 3}
+                position="relative"
+                onClick={() => setSelectedDay(item.day)}
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
+                {isSelected ? (
+                  <>
+                    <MobNavBg
+                      sx={{
+                        position: "absolute",
+                        bottom: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        zIndex: 0,
+                        color: card,
+                      }}
+                    />
+                    <VStack
+                      spacing={0}
+                      align="center"
+                      py={1}
+                      position="relative"
+                    >
+                      <Text
+                        fontSize="11px"
+                        fontWeight={700}
+                        color={mobileSelectedText}
+                        lineHeight="1"
+                      >
+                        Day
+                      </Text>
+                      <Text
+                        fontSize="24px"
+                        fontWeight={700}
+                        color={mobileSelectedText}
+                        lineHeight="1.1"
+                      >
+                        {item.day}
+                      </Text>
+                    </VStack>
+                  </>
+                ) : (
+                  <VStack>
+                    <HStack
+                      spacing={1.5}
+                      align="center"
+                      flexWrap="nowrap"
+                      whiteSpace="nowrap"
+                    >
+                      <Text
+                        fontSize="12px"
+                        fontWeight={500}
+                        color={mobileUnselectedText}
+                      >
+                        Day
+                      </Text>
+                      <Text
+                        fontSize="12px"
+                        fontWeight={600}
+                        color={mobileUnselectedText}
+                      >
+                        {item.day}
+                      </Text>
+                    </HStack>
+                    {item.done ? (
+                      <Box flexShrink={0}>
+                        <BsCheckCircleFill size={12} color="#25c368" />
+                      </Box>
+                    ) : item.locked ? (
+                      <Box flexShrink={0}>
+                        <FaLock size={18} color={mobileUnselectedText} />
+                      </Box>
+                    ) : null}
+                  </VStack>
+                )}
+              </Button>
+            );
+          })}
         </HStack>
       </Box>
     );
@@ -249,10 +295,7 @@ const Sidebar = () => {
               pl={4}
               justifyContent="space-between"
               _hover={{ bg: sidebarChip }}
-              onClick={() => {
-                if (!item.locked) setSelectedDay(item.day);
-              }}
-              opacity={item.locked ? 0.68 : 1}
+              onClick={() => setSelectedDay(item.day)}
               fontSize="1rem"
               sx={
                 selectedDay === item.day
@@ -271,11 +314,11 @@ const Sidebar = () => {
                 }
                 fontWeight={selectedDay === item.day ? "600" : "500"}
               >
-                {item.day === unlockedDay ? <MdOutlineAccessTime /> : null}
+                {item.day === selectedDay ? <MdOutlineAccessTime /> : null}
                 <Text>Day - {item.day}</Text>
               </HStack>
               {item.done ? (
-                <FiCheck size={14} color="#25c368" />
+                <FaCheckCircle size={14} color="#25c368" />
               ) : item.locked ? (
                 <FaLock size={12} color={sidebarLockIconColor} />
               ) : (

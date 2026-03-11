@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -7,29 +8,38 @@ import {
   HStack,
   Text,
   Divider,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { MdNavigateBefore } from "react-icons/md";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useChallengeColors } from "../ui/challengeTheme";
-import Sidebar from "../ui/SideBar";
+import Sidebar, { getUnlockedDay, TOTAL_DAYS } from "../ui/SideBar";
 import { FiInfo } from "react-icons/fi";
 import { useResponsive } from "../../hooks/useResponsive";
+
+const TOP_HEADER_HEIGHT = 56;
 
 function DayChallengeLayout() {
   const navigate = useNavigate();
   const { isMobile } = useResponsive();
-  const { border, text, muted, card, challengeMbBg } = useChallengeColors();
+  const { border, text, muted, card, challengeMbBg, bg } = useChallengeColors();
+  const headerBg = useColorModeValue(card, "#1D1D21B2");
+  const [selectedDay, setSelectedDay] = useState(getUnlockedDay);
 
   if (isMobile) {
     return (
-      <Box px={{ base: 4, sm: 5 }} minH="100vh">
+      <Box minH="100vh" data-challenge-page>
         <Box
+          position="fixed"
+          top={0}
+          left={0}
+          right={0}
+          zIndex={9}
           sx={{
             backgroundImage: challengeMbBg,
             backgroundPosition: "bottom",
             backgroundSize: "cover",
           }}
-          pb={4}
         >
           <HStack
             color={text}
@@ -40,7 +50,7 @@ function DayChallengeLayout() {
             minH="48px"
           >
             <HStack spacing={2} flex={1} minW={0}>
-              <Box flexShrink={0} as="span">
+              <Box flexShrink={0} as="span" onClick={() => navigate("/")}>
                 <MdNavigateBefore size={24} />
               </Box>
               <Text
@@ -49,35 +59,49 @@ function DayChallengeLayout() {
                 lineHeight="24px"
                 noOfLines={1}
               >
-                9-Day Fitness Challenge
+                Day {selectedDay} of {TOTAL_DAYS}
               </Text>
             </HStack>
             <Box flexShrink={0}>
               <FiInfo size={20} />
             </Box>
           </HStack>
-          <Sidebar />
+          <Sidebar
+            selectedDay={selectedDay}
+            onDayChange={setSelectedDay}
+          />
         </Box>
-        <Box pt={4} pb={6}>
+        <Box
+          pt="180px"
+          pb={6}
+          px={4}
+          bg={bg}
+        >
           <Outlet />
         </Box>
       </Box>
     );
   }
   return (
-    <Box pt={12} minH="100vh">
+    <Box minH="100vh" data-challenge-page>
       <Flex
+        position="fixed"
+        left={0}
+        right={0}
+        zIndex={9}
         justify="space-between"
         align="center"
         direction="row"
-        px={{ md: 6, lg: 8 }}
-        py={{ md: 3, lg: 4 }}
         minH="56px"
-        background={card}
+        background={headerBg}
         borderTop={`1px solid ${border}`}
         borderBottom={`1px solid ${border}`}
       >
-        <HStack spacing={4} fontSize={{ md: "13px", lg: "14px" }} align="center">
+        <HStack
+          spacing={4}
+          fontSize={{ md: "13px", lg: "14px" }}
+          align="center"
+        >
           <Button
             size="sm"
             variant="ghost"
@@ -90,7 +114,7 @@ function DayChallengeLayout() {
           </Button>
           <Divider orientation="vertical" height="16px" />
           <Text color={text} fontWeight={700} lineHeight="20px">
-            Day 3 of 9
+            Day {selectedDay} of {TOTAL_DAYS}
           </Text>
         </HStack>
         <HStack spacing={2}>
@@ -105,14 +129,16 @@ function DayChallengeLayout() {
           <FiInfo size={18} />
         </HStack>
       </Flex>
+      <Box pt={`${TOP_HEADER_HEIGHT}px`} aria-hidden />
       <Grid
         templateColumns={{ md: "300px 1fr", lg: "300px minmax(0, 1fr)" }}
         gap={{ md: 6, lg: 8 }}
-        px={{ md: 6, lg: 8 }}
-        py={{ md: 4, lg: 6 }}
       >
         <GridItem position="relative">
-          <Sidebar />
+          <Sidebar
+            selectedDay={selectedDay}
+            onDayChange={setSelectedDay}
+          />
         </GridItem>
         <GridItem
           w="100%"
@@ -121,7 +147,9 @@ function DayChallengeLayout() {
           minH={{ md: "calc(100vh - 200px)", lg: "calc(100vh - 220px)" }}
           overflowY="auto"
         >
-          <Outlet />
+          <Box h="100%" minH="200px" bg={bg}>
+            <Outlet />
+          </Box>
         </GridItem>
       </Grid>
     </Box>

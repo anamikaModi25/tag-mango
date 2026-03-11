@@ -48,7 +48,7 @@ function DayChallengePage() {
     onOpen: onCheckinOpen,
     onClose: onCheckinClose,
   } = useDisclosure();
-  const { text, muted, card } = useChallengeColors();
+  const { text, muted, card, border } = useChallengeColors();
   const modalMuted = useColorModeValue("gray.600", "#8d9bb6");
   const modalText = useColorModeValue("gray.800", "#e6edfb");
   const inputBg = useColorModeValue("#f7f8fc", "#151d2d");
@@ -61,9 +61,11 @@ function DayChallengePage() {
   );
   const [caption, setCaption] = useState("");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [mediaType, setMediaType] = useState<"image" | "video">("image");
   const [submittedPost, setSubmittedPost] = useState<{
     caption: string;
     imageUrl: string;
+    mediaType?: "image" | "video";
   } | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -85,11 +87,12 @@ function DayChallengePage() {
     const file = event.target.files?.[0];
     if (!file) return;
     setImageUrl(URL.createObjectURL(file));
+    setMediaType(file.type.startsWith("video/") ? "video" : "image");
   };
 
   const handleSubmitCheckin = () => {
     if (!caption.trim() || !imageUrl) return;
-    setSubmittedPost({ caption: caption.trim(), imageUrl });
+    setSubmittedPost({ caption: caption.trim(), imageUrl, mediaType });
     setCaption("");
     setImageUrl(null);
     onCheckinClose();
@@ -98,6 +101,7 @@ function DayChallengePage() {
   const resetCheckinModal = () => {
     setCaption("");
     setImageUrl(null);
+    setMediaType("image");
     onCheckinClose();
   };
 
@@ -118,6 +122,7 @@ function DayChallengePage() {
                 headerLabel="Your Submission"
                 mediaSrc={submittedPost.imageUrl}
                 mediaAlt="Submitted challenge check-in"
+                mediaType={submittedPost.mediaType}
                 likeCount="4"
                 commentCount="10"
               >
@@ -126,7 +131,7 @@ function DayChallengePage() {
             ) : (
               <>
                 <Flex
-                  justify="space-between"
+                  justify={{base: "space-between", md: "center"}}
                   align="center"
                   flexWrap="wrap"
                   gap={{ base: 2, sm: 3 }}
@@ -175,7 +180,7 @@ function DayChallengePage() {
                     p={{ base: 3, md: 4 }}
                   >
                     <Avatar
-                      size={{ base: "md", md: "lg" }}
+                      size={{ base: "md", md: "md" }}
                       name="Ashraf Idrishi"
                     />
                     <Text
@@ -190,12 +195,24 @@ function DayChallengePage() {
               </>
             )}
 
-            <Card p={{ base: 4, md: 5 }}>
+            <Card
+              p={{ base: 4, md: 5 }}
+              bg={card}
+              borderColor={border}
+              borderRadius="24px"
+              boxShadow="0 1px 3px rgba(0,0,0,0.06)"
+              _hover={{ boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }}
+              transition="box-shadow 0.2s ease, border-color 0.2s ease"
+            >
               <HStack
                 justify="center"
                 flexWrap="wrap"
                 gap={2}
                 spacing={0}
+                fontWeight={700}
+                fontSize={{ base: "1.125rem", md: "1.25rem" }}
+                lineHeight={1.5}
+                color={text}
               >
                 <Text
                   fontSize={{ base: "18px", md: "20px" }}
@@ -277,6 +294,8 @@ function DayChallengePage() {
                   timeAgo="2h ago"
                   likeCount="4"
                   commentCount="10"
+                  mediaSrc="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&h=400&fit=crop"
+                  mediaAlt="Gym workout"
                 >
                   <Text>
                     Completed today’s challenge workout, one step closer to my
@@ -288,9 +307,65 @@ function DayChallengePage() {
                   timeAgo="2 days ago"
                   likeCount="4"
                   commentCount="10"
+                  mediaSrc="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&h=400&fit=crop"
+                  mediaAlt="Fitness training"
                 >
                   <Text>
                     Today’s challenge workout completed—feeling stronger already
+                  </Text>
+                </PostCard>
+                <PostCard
+                  authorName="Maria Santos"
+                  timeAgo="3 days ago"
+                  likeCount="12"
+                  commentCount="5"
+                  mediaSrc="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+                  mediaType="video"
+                  mediaAlt="Workout video"
+                >
+                  <Text>
+                    Shared my morning yoga routine—great way to start the day
+                    with flexibility and focus.
+                  </Text>
+                </PostCard>
+                <PostCard
+                  authorName="James Wilson"
+                  timeAgo="4 days ago"
+                  likeCount="8"
+                  commentCount="3"
+                  mediaSrc="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=400&fit=crop"
+                  mediaAlt="CrossFit training"
+                >
+                  <Text>
+                    Day 3 strength training done. Deadlifts and squats—legs are
+                    on fire.
+                  </Text>
+                </PostCard>
+                <PostCard
+                  authorName="Emma Chen"
+                  timeAgo="5 days ago"
+                  likeCount="15"
+                  commentCount="7"
+                  mediaSrc="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4"
+                  mediaType="video"
+                  mediaAlt="Fitness journey video"
+                >
+                  <Text>
+                    Progress video from week 1—can already feel the difference in
+                    stamina and energy levels.
+                  </Text>
+                </PostCard>
+                <PostCard
+                  authorName="Alex Rivera"
+                  timeAgo="6 days ago"
+                  likeCount="6"
+                  commentCount="2"
+                  mediaSrc="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=600&h=400&fit=crop"
+                  mediaAlt="Yoga stretch"
+                >
+                  <Text>
+                    Evening stretch session after a long day. Recovery is just as
+                    important as the workout.
                   </Text>
                 </PostCard>
               </Stack>
